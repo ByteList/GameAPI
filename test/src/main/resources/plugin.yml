@@ -1,0 +1,10 @@
+name: TestGame
+version: 0.1
+author: ByteList
+main: de.gamechest.gameapi.test.TestGame
+
+commands:
+  lobby:
+  ingame:
+  end:
+  test:
