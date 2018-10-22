@@ -13,7 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by ByteList on 28.03.2018.
@@ -153,4 +155,21 @@ public class GameAPI {
         return clazz+"-"+(System.currentTimeMillis()/1000);
     }
 
+    public void sendJoinMessage(String displayname) {
+        sendJoinMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
+    }
+    public void sendJoinMessage(String displayname, List<Player> players) {
+        players.forEach(player -> {
+            player.sendMessage(this.prefix+"§e"+displayname+" §7ist dem Spiel beigetreten");
+        });
+    }
+
+    public void sendQuitMessage(String displayname) {
+        sendQuitMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
+    }
+    public void sendQuitMessage(String displayname, List<Player> players) {
+        players.forEach(player -> {
+            player.sendMessage(this.prefix+"§e"+displayname+" §7hat das Spiel verlassen");
+        });
+    }
 }
