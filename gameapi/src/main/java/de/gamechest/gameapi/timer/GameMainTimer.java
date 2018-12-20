@@ -10,16 +10,19 @@ import de.gamechest.gameapi.GameState;
  */
 public class GameMainTimer extends GameTimer {
 
-    public GameMainTimer(int minutes) {
-        this(minutes, 0);
+    public GameMainTimer(int seconds) {
+        super(GameAPI.getAPI().generateGameDefaultId("GameMainTimer"), seconds);
     }
 
-    public GameMainTimer(int minutes, int seconds) {
-        super(GameAPI.getAPI().generateGameDefaultId("GameMainTimer"), minutes, seconds);
-    }
-
+    @Override
     public void start() {
         GameAPI.getAPI().setGameState(GameState.INGAME);
         super.start();
+    }
+
+    @Override
+    public void end() {
+        GameAPI.getAPI().setGameState(GameState.END);
+        super.end();
     }
 }

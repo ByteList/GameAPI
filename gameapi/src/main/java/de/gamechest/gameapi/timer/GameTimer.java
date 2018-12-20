@@ -16,31 +16,20 @@ import org.bukkit.Bukkit;
 public class GameTimer extends GameDefault {
 
     @Getter
-    private final int minutes, seconds;
-    @Getter
-    private int currentTime, currentMinutes, currentSeconds;
+    private int currentTime;
     @Getter
     private String formattedTime;
 
     @Getter
     private GameTask gameTask;
 
-    public GameTimer(int minutes, int seconds) {
-        super(GameAPI.getAPI().generateGameDefaultId("GameTimer"));
-        this.minutes = this.currentMinutes = minutes;
-        this.seconds = this.currentSeconds = seconds;
-
-        this.currentTime = this.minutes*60+this.seconds;
-
+    public GameTimer(int seconds) {
+        this(GameAPI.getAPI().generateGameDefaultId("GameTimer"), seconds);
     }
 
-    GameTimer(String id, int minutes, int seconds) {
+    public GameTimer(String id, int seconds) {
         super(id);
-        this.minutes = this.currentMinutes = minutes;
-        this.seconds = this.currentSeconds = seconds;
-
-        this.currentTime = this.minutes*60+this.seconds;
-
+        this.currentTime = seconds;
     }
 
     public void start() {
@@ -52,31 +41,40 @@ public class GameTimer extends GameDefault {
         }
     }
 
-    private void end() {
+    public void end() {
         if(this.gameTask != null) {
             GameAPI.getAPI().cancelTask(this.gameTask);
+            this.gameTask = null;
             Bukkit.getPluginManager().callEvent(new GameTimerFinishedEvent(this));
         }
+    }
+
+    public boolean isRunning() {
+        return this.gameTask != null;
+    }
+
+    private String twoDigitString(int number) {
+        if (number == 0) {
+            return "00";
+        }
+        if (number / 10 == 0) {
+            return "0" + number;
+        }
+        return String.valueOf(number);
     }
 
     private void countAndFormat() {
         this.currentTime--;
 
-        if (this.currentSeconds > 0) {
-            this.currentSeconds--;
-        } else {
-            this.currentSeconds = 59;
-            this.currentMinutes--;
-        }
-
         if (this.currentTime < 60) {
-            this.formattedTime = String.valueOf(this.currentSeconds + " Sekunde"+(this.currentSeconds == 1 ? "" : "n"));
+            this.formattedTime = String.valueOf(this.currentTime + " Sekunde"+(this.currentTime == 1 ? "" : "n"));
         } else {
-            if (this.currentSeconds < 10) this.formattedTime = this.currentMinutes + ":0" + this.currentSeconds;
-            else this.formattedTime = this.currentMinutes + ":" + this.currentSeconds;
+            int minutes = (this.currentTime % 3600) / 60;
+            int seconds = this.currentTime % 60;
+            this.formattedTime = twoDigitString(minutes) + ":" + twoDigitString(seconds);
         }
 
-        if(this.currentTime == 60) {
+        if(this.currentTime == 0) {
             end();
         }
     }
