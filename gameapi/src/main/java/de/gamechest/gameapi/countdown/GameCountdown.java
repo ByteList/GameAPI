@@ -8,6 +8,7 @@ import de.gamechest.gameapi.GameState;
 import de.gamechest.gameapi.task.GameTask;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class GameCountdown extends GameDefault {
     private String message, title, subTitle;
 
     private Runnable runnable;
-    private Callback<Collection<Player>> runAtEnd, runBeforeNotify;
+    private Callback<Collection<Player>> runAtEnd, runBeforeNotify, runAtEveryTick;
     @Getter @Setter
     private GameCountdownNotifyType notifyType;
 
@@ -56,6 +57,8 @@ public class GameCountdown extends GameDefault {
         this.runnable = ()-> {
             if(this.currentTime > 0) {
                 this.currentTime--;
+                this.runAtEveryTick.run(this.getPlayers());
+
                 for (int i : this.notifyTimes) {
                     if(i == this.currentTime) sendNotify();
                 }
@@ -115,6 +118,8 @@ public class GameCountdown extends GameDefault {
                 this.getPlayers().forEach(player -> BountifulAPI.sendTitle(player, 5, 20, 5, title, subTitle));
                 break;
         }
+
+        this.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.RECORD_BLOCKS, 2F, 2F));
     }
 
 
@@ -124,6 +129,10 @@ public class GameCountdown extends GameDefault {
 
     public void runBeforeNotify(Callback<Collection<Player>> runnable) {
         this.runBeforeNotify = runnable;
+    }
+
+    public void runAtEveryTick(Callback<Collection<Player>> runnable) {
+        this.runAtEveryTick = runnable;
     }
 
     public void setCurrentTime(int time) {
