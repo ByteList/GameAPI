@@ -168,7 +168,10 @@ public class GameMapVote {
     public void onQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
 
-        int voted = this.votedMap.remove(player);
+        if(!this.votedMap.containsKey(player))
+            return;
+
+        int voted = this.votedMap.get(player);
         this.votesPerMap.put(voted, this.votesPerMap.get(voted)-1);
         this.openedInventory.remove(player);
     }
