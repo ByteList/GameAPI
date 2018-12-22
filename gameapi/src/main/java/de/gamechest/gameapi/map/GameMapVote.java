@@ -38,7 +38,7 @@ public class GameMapVote {
     private HashMap<Player, Integer> votedMap = new HashMap<>();
     private List<Player> openedInventory = new ArrayList<>();
 
-    private final String inventoryName = "§1Voting";
+    public static final String INVENTORY_NAME = "§1Voting";
 
     @Getter@Setter
     private boolean votingEnabled;
@@ -77,7 +77,7 @@ public class GameMapVote {
     }
 
     private void openInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, this.inventoryName);
+        Inventory inventory = Bukkit.createInventory(null, 27, INVENTORY_NAME);
         ItemStack itemStack = ItemBuilder.getPlaceholder();
         int size = this.mapsInPool.size();
 
@@ -123,34 +123,29 @@ public class GameMapVote {
     }
 
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getInventory().getName().equalsIgnoreCase(this.inventoryName)) {
-            openedInventory.remove(e.getPlayer());
-        }
+        openedInventory.remove(e.getPlayer());
     }
 
     public void onInventoryClick(InventoryClickEvent e, Runnable runAtSuccess) {
         Player player = (Player) e.getWhoClicked();
 
-        if(e.getInventory().getName().equals(this.inventoryName)) {
-            e.setCancelled(true);
-            if(e.getCurrentItem() != null && e.getCurrentItem().getItemMeta().getDisplayName().startsWith("§e")) {
-                this.mapsInPool.forEach((integer, gameMap) -> {
-                    if(e.getCurrentItem().getItemMeta().getDisplayName().equals("§e"+gameMap.getDisplayname())) {
-                        if (votedMap.containsKey(player)) {
-                            votesPerMap.put(votedMap.get(player), votesPerMap.get(votedMap.get(player)) - 1);
-                            player.sendMessage("§8\u00BB §6Du hast deine Stimme auf die Map §a" + gameMap.getDisplayname() + " §6geändert.");
-                        } else {
-                            player.sendMessage("§8\u00BB §6Du hast für die Map §a" + gameMap.getDisplayname() + " §6gestimmt.");
-                        }
-                        votedMap.put(player, integer);
-                        votesPerMap.put(integer, votesPerMap.get(integer) + 1);
-
-                        player.closeInventory();
-                        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 3F);
-                        runAtSuccess.run();
+        if(e.getCurrentItem().getItemMeta().getDisplayName().startsWith("§e")) {
+            this.mapsInPool.forEach((integer, gameMap) -> {
+                if(e.getCurrentItem().getItemMeta().getDisplayName().equals("§e"+gameMap.getDisplayname())) {
+                    if (votedMap.containsKey(player)) {
+                        votesPerMap.put(votedMap.get(player), votesPerMap.get(votedMap.get(player)) - 1);
+                        player.sendMessage("§8\u00BB §6Du hast deine Stimme auf die Map §a" + gameMap.getDisplayname() + " §6geändert.");
+                    } else {
+                        player.sendMessage("§8\u00BB §6Du hast für die Map §a" + gameMap.getDisplayname() + " §6gestimmt.");
                     }
-                });
-            }
+                    votedMap.put(player, integer);
+                    votesPerMap.put(integer, votesPerMap.get(integer) + 1);
+
+                    player.closeInventory();
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 3F);
+                    runAtSuccess.run();
+                }
+            });
         }
     }
 
