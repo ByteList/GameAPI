@@ -126,7 +126,7 @@ public class GameMapVote {
         openedInventory.remove(e.getPlayer());
     }
 
-    public void onInventoryClick(InventoryClickEvent e, Runnable runAtSuccess) {
+    public void onInventoryClick(InventoryClickEvent e, Callback<GameMap> runAtSuccess) {
         Player player = (Player) e.getWhoClicked();
 
         if(e.getCurrentItem().getItemMeta().getDisplayName().startsWith("§e")) {
@@ -143,7 +143,7 @@ public class GameMapVote {
 
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 2F, 3F);
-                    runAtSuccess.run();
+                    runAtSuccess.run(gameMap);
                 }
             });
         }
