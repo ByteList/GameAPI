@@ -159,17 +159,13 @@ public class GameAPI {
         sendJoinMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
     }
     public void sendJoinMessage(String displayname, List<Player> players) {
-        players.forEach(player -> {
-            player.sendMessage(this.prefix+"§e"+displayname+" §7ist dem Spiel beigetreten");
-        });
+        players.forEach(player -> player.sendMessage("§8\u00BB "+displayname+" §7ist dem Spiel beigetreten"));
     }
 
     public void sendQuitMessage(String displayname) {
         sendQuitMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
     }
     public void sendQuitMessage(String displayname, List<Player> players) {
-        players.forEach(player -> {
-            player.sendMessage(this.prefix+"§e"+displayname+" §7hat das Spiel verlassen");
-        });
+        players.forEach(player -> player.sendMessage("§8\u00BB "+displayname+" §7hat das Spiel verlassen"));
     }
 }

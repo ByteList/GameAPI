@@ -86,13 +86,15 @@ public class GameTeam extends GameDefault {
     }
 
     public GameTeam updateTabList() {
-        this.getMember().forEach(player -> {
-            if(this.showPrefixAndSuffix) {
-                if(this.tabListMode == TabList.TabListMode.CUSTOM) TabList.updateCustom(player, pos, prefix, suffix);
-                else TabList.update(player, this.tabListMode);
-            } else TabList.update(player, TabList.TabListMode.WHITE);
-        });
+        this.getMember().forEach(this::updateTabList);
+        return this;
+    }
 
+    public GameTeam updateTabList(Player player) {
+        if(this.showPrefixAndSuffix && isMember(player)) {
+            if(this.tabListMode == TabList.TabListMode.CUSTOM) TabList.updateCustom(player, pos, prefix, suffix);
+            else TabList.update(player, this.tabListMode);
+        } else TabList.update(player, TabList.TabListMode.WHITE);
         return this;
     }
 }

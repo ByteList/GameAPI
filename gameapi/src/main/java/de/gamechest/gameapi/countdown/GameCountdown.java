@@ -11,6 +11,9 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by ByteList on 22.09.2018.
@@ -27,10 +30,10 @@ public class GameCountdown extends GameDefault {
     private String message, title, subTitle;
 
     private Runnable runnable;
-    private Callback<ArrayList<Player>> runAtEnd, runBeforeNotify;
+    private Callback<Collection<Player>> runAtEnd, runBeforeNotify;
     @Getter @Setter
     private GameCountdownNotifyType notifyType;
-    @Getter
+
     private ArrayList<Player> players = new ArrayList<>();
 
     private int[] notifyTimes;
@@ -69,7 +72,7 @@ public class GameCountdown extends GameDefault {
     }
 
     public void start() {
-        if(this.gameTask != null) this.gameTask = GameAPI.getAPI().runStateRepeatingSync(gameState, this.runnable, 20L);
+        if(this.gameTask == null) this.gameTask = GameAPI.getAPI().runStateRepeatingSync(gameState, this.runnable, 20L);
     }
 
     public void pause() {
@@ -82,7 +85,7 @@ public class GameCountdown extends GameDefault {
     public void end() {
         pause();
         this.currentTime = 0;
-        this.runAtEnd.run(this.players);
+        this.runAtEnd.run(this.getPlayers());
     }
 
     public void restart() {
@@ -91,31 +94,35 @@ public class GameCountdown extends GameDefault {
         start();
     }
 
+    public boolean isRunning() {
+        return this.gameTask != null;
+    }
+
     private void sendNotify() {
+        this.runBeforeNotify.run(this.getPlayers());
+
         // §7Das Spiel beginnt in §e%seconds%§7 Sekunde%n%
-        String msg = replace(this.message), t = replace(this.title), st = replace(this.subTitle);
+        String message = replace(this.message), title = replace(this.title), subTitle = replace(this.subTitle);
 
         switch (this.notifyType) {
             case CHAT:
-                this.players.forEach(player -> player.sendMessage(msg));
+                this.getPlayers().forEach(player -> player.sendMessage(message));
                 break;
             case ACTION_BAR:
-                this.players.forEach(player -> BountifulAPI.sendActionBar(player, msg));
+                this.getPlayers().forEach(player -> BountifulAPI.sendActionBar(player, message));
                 break;
             case TITLE:
-                this.players.forEach(player -> BountifulAPI.sendTitle(player, 5, 20, 5, t, st));
+                this.getPlayers().forEach(player -> BountifulAPI.sendTitle(player, 5, 20, 5, title, subTitle));
                 break;
         }
-
-        this.runBeforeNotify.run(this.players);
     }
 
 
-    public void runAtEnd(Callback<ArrayList<Player>> runnable) {
+    public void runAtEnd(Callback<Collection<Player>> runnable) {
         this.runAtEnd = runnable;
     }
 
-    public void runBeforeNotify(Callback<ArrayList<Player>> runnable) {
+    public void runBeforeNotify(Callback<Collection<Player>> runnable) {
         this.runBeforeNotify = runnable;
     }
 
@@ -125,5 +132,34 @@ public class GameCountdown extends GameDefault {
 
     private String replace(String string) {
         return string.replace("%seconds%", String.valueOf(this.currentTime)).replace("%n%", (this.currentTime != 1 ? "n" : ""));
+    }
+
+    public void addPlayer(Player player) {
+        if(!this.players.contains(player))
+            this.players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        this.players.remove(player);
+    }
+
+    public Collection<Player> getPlayers() {
+        return Collections.unmodifiableCollection(this.players);
+    }
+
+    public void addPlayers(List<Player> players) {
+        players.forEach(this::addPlayer);
+    }
+
+    public void removePlayers(List<Player> players) {
+        players.forEach(this::removePlayer);
+    }
+
+    public void addPlayers(Player... players) {
+        this.addPlayers(players);
+    }
+
+    public void removePlayers(Player... players) {
+        this.removePlayers(players);
     }
 }
