@@ -119,7 +119,7 @@ public class GameCountdown extends GameDefault {
                 break;
         }
 
-        this.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.RECORD_BLOCKS, 2F, 2F));
+        this.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 2F, 2F));
     }
 
 

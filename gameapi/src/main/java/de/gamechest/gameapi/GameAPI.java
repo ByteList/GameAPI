@@ -3,6 +3,7 @@ package de.gamechest.gameapi;
 import de.gamechest.gameapi.event.GameStateChangeEvent;
 import de.gamechest.gameapi.listener.GameListener;
 import de.gamechest.gameapi.listener.GameListenerManager;
+import de.gamechest.gameapi.map.GameMap;
 import de.gamechest.gameapi.scoreboard.GameScoreboard;
 import de.gamechest.gameapi.task.GameTask;
 import de.gamechest.gameapi.task.GameTaskManager;
@@ -27,7 +28,7 @@ public class GameAPI {
     private static GameAPI gameAPI;
     private final GamePlugin plugin;
     @Getter
-    private final File homeDirectory, mapsDirectory;
+    private final File homeDirectory, mapsDirectory, rootDirectory, unloadedMapsDirectory;
 
     @Getter
     private String apiVersion;
@@ -44,16 +45,23 @@ public class GameAPI {
     private HashMap<Player, GameScoreboard> gameScoreboards;
     @Getter
     private HashMap<Player, GameTeam> gameTeams;
+    @Getter
+    private ArrayList<GameMap> gameMaps;
 
 
     GameAPI(GamePlugin plugin, String game, String prefix) {
         gameAPI = this;
         this.plugin = plugin;
 
+        this.rootDirectory = new File("./");
         this.homeDirectory = plugin.getDataFolder();
         this.mapsDirectory = new File(this.homeDirectory, "maps/");
+        this.unloadedMapsDirectory = new File(this.homeDirectory, "unloadedMaps/");
         if(!this.mapsDirectory.exists()) {
             this.mapsDirectory.mkdirs();
+        }
+        if(!this.unloadedMapsDirectory.exists()) {
+            this.unloadedMapsDirectory.mkdirs();
         }
 
         this.game = game;
@@ -65,6 +73,7 @@ public class GameAPI {
 
         this.gameScoreboards = new HashMap<>();
         this.gameTeams = new HashMap<>();
+        this.gameMaps = new ArrayList<>();
 
         String[] v = this.getClass().getPackage().getImplementationVersion().split(":");
         apiVersion = v[0]+":"+v[1].substring(0, 7);
@@ -158,6 +167,7 @@ public class GameAPI {
     public void sendJoinMessage(String displayname) {
         sendJoinMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
     }
+
     public void sendJoinMessage(String displayname, List<Player> players) {
         players.forEach(player -> player.sendMessage("§8\u00BB "+displayname+" §7ist dem Spiel beigetreten"));
     }
@@ -165,7 +175,18 @@ public class GameAPI {
     public void sendQuitMessage(String displayname) {
         sendQuitMessage(displayname, new ArrayList<>(Bukkit.getOnlinePlayers()));
     }
+
     public void sendQuitMessage(String displayname, List<Player> players) {
         players.forEach(player -> player.sendMessage("§8\u00BB "+displayname+" §7hat das Spiel verlassen"));
+    }
+
+    public void loadMaps() {
+        this.gameMaps.clear();
+        File[] files = this.mapsDirectory.listFiles((dir, name) -> dir == this.mapsDirectory);
+        if(files == null) return;
+
+        for (File map : files) {
+            this.gameMaps.add(new GameMap(map));
+        }
     }
 }
