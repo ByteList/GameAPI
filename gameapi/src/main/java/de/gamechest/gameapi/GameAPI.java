@@ -75,6 +75,8 @@ public class GameAPI {
         this.gameTeams = new HashMap<>();
         this.gameMaps = new ArrayList<>();
 
+        this.loadMaps();
+
         String[] v = this.getClass().getPackage().getImplementationVersion().split(":");
         apiVersion = v[0]+":"+v[1].substring(0, 7);
     }
