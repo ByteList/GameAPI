@@ -79,4 +79,7 @@ public class GameTimer extends GameDefault {
         }
     }
 
+    public boolean isRepeatingTimer() {
+        return false;
+    }
 }
