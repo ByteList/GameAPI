@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -162,6 +163,14 @@ public class GameMapVote {
                 }
             });
         }
+    }
+
+    public void onQuit(PlayerQuitEvent e) {
+        Player player = e.getPlayer();
+
+        int voted = this.votedMap.remove(player);
+        this.votesPerMap.put(voted, this.votesPerMap.get(voted)-1);
+        this.openedInventory.remove(player);
     }
 
     public void end(List<Player> players, int slot, Callback<Player> runAtSuccess) {
