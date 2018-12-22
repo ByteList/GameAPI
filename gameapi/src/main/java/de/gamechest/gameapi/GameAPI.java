@@ -184,7 +184,7 @@ public class GameAPI {
 
     public void loadMaps() {
         this.gameMaps.clear();
-        File[] files = this.mapsDirectory.listFiles((dir, name) -> dir == this.mapsDirectory);
+        File[] files = this.mapsDirectory.listFiles();
         if(files == null) return;
 
         for (File map : files) {

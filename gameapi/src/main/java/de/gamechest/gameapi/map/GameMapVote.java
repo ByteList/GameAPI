@@ -48,21 +48,39 @@ public class GameMapVote {
         if (GameChest.getInstance().isCloudEnabled())
             ByteCloudCore.getInstance().getCloudAPI().setMotd("Votingphase...");
         List<GameMap> maps = new ArrayList<>(GameAPI.getAPI().getGameMaps());
-
+        int max = maps.size();
         int n = 3;
-
-        while (n != 0) {
-            n--;
-
-            int max = maps.size();
-            int rnd = ThreadLocalRandom.current().nextInt(max);
-            GameMap voteMap = maps.get(rnd);
-
-            maps.remove(voteMap);
-            mapsInPool.put(n, voteMap);
-            votesPerMap.put(n, 0);
+        if(max > 0 && max < 4) {
+            switch (max) {
+                case 1:
+                    registerMap(0, maps.get(0));
+                    break;
+                case 2:
+                    registerMap(0, maps.get(0));
+                    registerMap(1, maps.get(1));
+                    break;
+                case 3:
+                    registerMap(0, maps.get(0));
+                    registerMap(1, maps.get(1));
+                    registerMap(2, maps.get(2));
+                    break;
+            }
+        } else if(max > 0) {
+            while (n != 0) {
+                n--;
+                int rnd = ThreadLocalRandom.current().nextInt(max);
+                GameMap voteMap = maps.get(rnd);
+                maps.remove(voteMap);
+                registerMap(n, voteMap);
+            }
         }
+
         this.votingEnabled = true;
+    }
+
+    private void registerMap(int pos, GameMap gameMap) {
+        mapsInPool.put(pos, gameMap);
+        votesPerMap.put(pos, 0);
     }
 
     public void setItem(Player player, int slot) {

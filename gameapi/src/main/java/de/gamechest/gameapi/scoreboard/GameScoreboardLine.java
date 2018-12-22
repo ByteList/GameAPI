@@ -44,8 +44,6 @@ public class GameScoreboardLine {
 
     public void setPrefix(String prefix) {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
-        this.prefix = prefix;
-
         set(prefix, null);
     }
 
@@ -65,8 +63,6 @@ public class GameScoreboardLine {
 
     public void setSuffix(String suffix) {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
-        this.suffix = suffix;
-
         set(null, suffix);
     }
 
@@ -79,13 +75,15 @@ public class GameScoreboardLine {
 
     public void set(String prefix, String suffix) {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
-        if(prefix != null) this.prefix = prefix;
-        if(suffix != null) this.suffix = suffix;
+        if(prefix == null) prefix = this.prefix;
+        if(suffix == null) suffix = this.suffix;
 
+        String finalPrefix = prefix;
+        String finalSuffix = suffix;
         this.gameScoreboard.getUpdateOnly().forEach(player -> {
             Team team = player.getScoreboard().getTeam(this.staticValue) != null ? player.getScoreboard().getTeam(this.staticValue) : registerTeam(player.getScoreboard());
-            team.setPrefix(this.prefix);
-            team.setSuffix(this.suffix);
+            team.setPrefix(finalPrefix);
+            team.setSuffix(finalSuffix);
         });
         this.gameScoreboard.updateOnly(this.gameScoreboard.getPlayers());
     }

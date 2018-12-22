@@ -11,10 +11,7 @@ import lombok.Setter;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by ByteList on 22.09.2018.
@@ -32,6 +29,7 @@ public class GameCountdown extends GameDefault {
 
     private Runnable runnable;
     private Callback<Collection<Player>> runAtEnd, runBeforeNotify, runAtEveryTick;
+    private HashMap<Integer, Callback<Collection<Player>>> runAtTick = new HashMap<>();
     @Getter @Setter
     private GameCountdownNotifyType notifyType;
 
@@ -58,6 +56,10 @@ public class GameCountdown extends GameDefault {
             if(this.currentTime > 0) {
                 this.currentTime--;
                 this.runAtEveryTick.run(this.getPlayers());
+
+                if(this.runAtTick.containsKey(this.currentTime)) {
+                    this.runAtTick.get(this.currentTime).run(this.getPlayers());
+                }
 
                 for (int i : this.notifyTimes) {
                     if(i == this.currentTime) sendNotify();
@@ -133,6 +135,10 @@ public class GameCountdown extends GameDefault {
 
     public void runAtEveryTick(Callback<Collection<Player>> runnable) {
         this.runAtEveryTick = runnable;
+    }
+
+    public void runAtTick(int tick, Callback<Collection<Player>> runnable) {
+        this.runAtTick.put(tick, runnable);
     }
 
     public void setCurrentTime(int time) {
