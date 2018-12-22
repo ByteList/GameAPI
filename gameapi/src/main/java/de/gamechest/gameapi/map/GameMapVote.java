@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -113,12 +112,10 @@ public class GameMapVote {
     }
 
     public void onInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
+        Player player = e.getPlayer();
 
-        if (e.getItem() != null && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
-                && e.getItem().getItemMeta().getDisplayName().equals("§bMapvoting")) {
-            e.setCancelled(true);
-            openInventory(p);
+        if (e.getItem().getItemMeta().getDisplayName().equals("§bMapvoting")) {
+            openInventory(player);
         }
     }
 
