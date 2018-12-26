@@ -78,6 +78,7 @@ public class GameScoreboard extends GameDefault {
     public GameScoreboard changeInteractiveLine(String staticValue, String prefix, String suffix) {
         GameScoreboardLine team = getLine(staticValue);
         team.set(prefix, suffix);
+        updateOnly(this.players);
         return this;
     }
 
@@ -85,6 +86,7 @@ public class GameScoreboard extends GameDefault {
         GameScoreboardLine team = getLine(staticValue);
         updateOnly(player);
         team.set(prefix, suffix);
+        updateOnly(this.players);
         return this;
     }
 

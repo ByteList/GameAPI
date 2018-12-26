@@ -85,7 +85,6 @@ public class GameScoreboardLine {
             team.setPrefix(finalPrefix);
             team.setSuffix(finalSuffix);
         });
-        this.gameScoreboard.updateOnly(this.gameScoreboard.getPlayers());
     }
 
     public String getLine() {
