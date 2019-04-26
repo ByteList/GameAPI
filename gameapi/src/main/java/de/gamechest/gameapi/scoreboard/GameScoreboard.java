@@ -30,24 +30,9 @@ public class GameScoreboard extends GameDefault {
     private ArrayList<GameScoreboardLine> addedLines = new ArrayList<>();
 
     private HashMap<String, Integer> interactiveLines = new HashMap<>();
-    @Getter
-    private ArrayList<Player> updateOnly = new ArrayList<>();
 
     public GameScoreboard(String id) {
         super(id);
-    }
-
-    public GameScoreboard updateOnly(Player player) {
-        this.updateOnly.clear();
-        this.updateOnly.add(player);
-
-        return this;
-    }
-
-    public GameScoreboard updateOnly(ArrayList<Player> players) {
-        this.updateOnly = players;
-
-        return this;
     }
 
     public GameScoreboard setHeader(String header) {
@@ -77,16 +62,13 @@ public class GameScoreboard extends GameDefault {
 
     public GameScoreboard changeInteractiveLine(String staticValue, String prefix, String suffix) {
         GameScoreboardLine team = getLine(staticValue);
-        team.set(prefix, suffix);
-        updateOnly(this.players);
+        team.set(this.players, prefix, suffix);
         return this;
     }
 
     public GameScoreboard changeInteractiveLine(Player player, String staticValue, String prefix, String suffix) {
         GameScoreboardLine team = getLine(staticValue);
-        updateOnly(player);
-        team.set(prefix, suffix);
-        updateOnly(this.players);
+        team.set(Collections.singletonList(player), prefix, suffix);
         return this;
     }
 
@@ -133,7 +115,6 @@ public class GameScoreboard extends GameDefault {
             }
 
             this.players.add(player);
-            this.updateOnly.add(player);
             GameAPI.getAPI().getGameScoreboards().put(player, this);
 
             player.setScoreboard(scoreboard);

@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ByteList on 28.03.2018.
@@ -31,27 +32,32 @@ public class GameAPI {
     private final File homeDirectory, mapsDirectory, rootDirectory, unloadedMapsDirectory;
 
     @Getter
-    private String apiVersion;
+    private final String apiVersion;
     @Getter
-    private String prefix;
+    private final String prefix;
     @Getter
-    private String game;
+    private final String game;
     @Getter
     private GameState gameState;
 
-    private GameTaskManager gameTaskManager;
-    private GameListenerManager gameListenerManager;
+    private final GameTaskManager gameTaskManager;
+    private final GameListenerManager gameListenerManager;
     @Getter
-    private HashMap<Player, GameScoreboard> gameScoreboards;
+    private final HashMap<Player, GameScoreboard> gameScoreboards;
     @Getter
-    private HashMap<Player, GameTeam> gameTeams;
+    private final HashMap<Player, GameTeam> gameTeams;
     @Getter
-    private ArrayList<GameMap> gameMaps;
+    private final ArrayList<GameMap> gameMaps;
+    @Getter
+    private final String gameId;
 
 
     GameAPI(GamePlugin plugin, String game, String prefix) {
         gameAPI = this;
         this.plugin = plugin;
+
+        String[] v = this.getClass().getPackage().getImplementationVersion().split(":");
+        apiVersion = v[0]+":"+v[1].substring(0, 7);
 
         this.rootDirectory = new File("./");
         this.homeDirectory = plugin.getDataFolder();
@@ -67,6 +73,7 @@ public class GameAPI {
         this.game = game;
         this.prefix = prefix;
         this.gameState = GameState.SETUP;
+        this.gameId = UUID.randomUUID().toString().split("-")[0];
 
         this.gameTaskManager = new GameTaskManager(plugin);
         this.gameListenerManager = new GameListenerManager(plugin);
@@ -77,8 +84,6 @@ public class GameAPI {
 
         this.loadMaps();
 
-        String[] v = this.getClass().getPackage().getImplementationVersion().split(":");
-        apiVersion = v[0]+":"+v[1].substring(0, 7);
     }
 
     public static boolean isGame(JavaPlugin plugin) {

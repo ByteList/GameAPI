@@ -42,6 +42,10 @@ public class GameTeam extends GameDefault {
         super(id);
         this.pos = "";
         this.tabListMode = tabListMode;
+        if(tabListMode.isColor()) {
+            this.prefix = "§"+tabListMode.getColorCode();
+        }
+        this.suffix = "";
         this.showPrefixAndSuffix = true;
     }
 

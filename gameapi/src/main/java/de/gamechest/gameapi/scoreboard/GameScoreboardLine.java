@@ -2,8 +2,11 @@ package de.gamechest.gameapi.scoreboard;
 
 import lombok.Getter;
 import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import java.util.List;
 
 /**
  * Created by ByteList on 21.09.2018.
@@ -41,12 +44,6 @@ public class GameScoreboardLine {
         this.interactive = interactive;
     }
 
-
-    public void setPrefix(String prefix) {
-        Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
-        set(prefix, null);
-    }
-
     public String getPrefix() {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
         Validate.notNull(this.prefix, "Prefix is null");
@@ -61,11 +58,6 @@ public class GameScoreboardLine {
         return this.staticValue;
     }
 
-    public void setSuffix(String suffix) {
-        Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
-        set(null, suffix);
-    }
-
     public String getSuffix() {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
         Validate.notNull(this.prefix, "Suffix is null");
@@ -73,14 +65,14 @@ public class GameScoreboardLine {
         return this.suffix;
     }
 
-    public void set(String prefix, String suffix) {
+    public void set(List<Player> players, String prefix, String suffix) {
         Validate.isTrue(this.interactive, "GameScoreboardLine is not interactive");
         if(prefix == null) prefix = this.prefix;
         if(suffix == null) suffix = this.suffix;
 
         String finalPrefix = prefix;
         String finalSuffix = suffix;
-        this.gameScoreboard.getUpdateOnly().forEach(player -> {
+        players.forEach(player -> {
             Team team = player.getScoreboard().getTeam(this.staticValue) != null ? player.getScoreboard().getTeam(this.staticValue) : registerTeam(player.getScoreboard());
             team.setPrefix(finalPrefix);
             team.setSuffix(finalSuffix);
