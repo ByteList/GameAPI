@@ -187,6 +187,10 @@ public class GameAPI {
         players.forEach(player -> player.sendMessage("§8\u00BB "+displayname+" §7hat das Spiel verlassen"));
     }
 
+    public void sendStopMessage(int second, List<Player> players) {
+        players.forEach(player -> player.sendMessage("§8\u00BB §7Der Server wird in §e"+second+"§7 Sekunde"+(second == 1 ? "" : "n")+" gestoppt."));
+    }
+
     public void loadMaps() {
         this.gameMaps.clear();
         File[] files = this.mapsDirectory.listFiles();
