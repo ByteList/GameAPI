@@ -1,6 +1,6 @@
 package de.gamechest.gameapi.team;
 
-import de.gamechest.TabList;
+import de.gamechest.common.spigot.SpigotChestTabList;
 import de.gamechest.gameapi.GameAPI;
 import de.gamechest.gameapi.GameDefault;
 import de.gamechest.gameapi.event.GameTeamAddedMemberEvent;
@@ -24,7 +24,7 @@ public class GameTeam extends GameDefault {
     private boolean friendlyFireEnabled, showPrefixAndSuffix;
 
     private final String pos;
-    private final TabList.TabListMode tabListMode;
+    private final SpigotChestTabList.TabListMode tabListMode;
 
     @Getter @Setter
     private String prefix, suffix;
@@ -32,13 +32,13 @@ public class GameTeam extends GameDefault {
     public GameTeam(String id, String pos, String prefix, String suffix) {
         super(id);
         this.pos = pos;
-        this.tabListMode = TabList.TabListMode.CUSTOM;
+        this.tabListMode = SpigotChestTabList.TabListMode.CUSTOM;
         this.prefix = prefix;
         this.suffix = suffix;
         this.showPrefixAndSuffix = true;
     }
 
-    public GameTeam(String id, TabList.TabListMode tabListMode) {
+    public GameTeam(String id, SpigotChestTabList.TabListMode tabListMode) {
         super(id);
         this.pos = "";
         this.tabListMode = tabListMode;
@@ -59,8 +59,8 @@ public class GameTeam extends GameDefault {
             GameAPI.getAPI().getGameTeams().put(player, this);
 
             if(this.showPrefixAndSuffix) {
-                if(this.tabListMode == TabList.TabListMode.CUSTOM) TabList.updateCustom(player, pos, prefix, suffix);
-                else TabList.update(player, this.tabListMode);
+                if(this.tabListMode == SpigotChestTabList.TabListMode.CUSTOM) SpigotChestTabList.updateCustom(player, pos, prefix, suffix);
+                else SpigotChestTabList.update(player, this.tabListMode);
             }
 
             Bukkit.getPluginManager().callEvent(new GameTeamAddedMemberEvent(player, this));
@@ -73,7 +73,7 @@ public class GameTeam extends GameDefault {
         if(this.member.contains(player)) {
             this.member.remove(player);
 
-            TabList.update(player, TabList.TabListMode.WHITE);
+            SpigotChestTabList.update(player, SpigotChestTabList.TabListMode.WHITE);
 
             Bukkit.getPluginManager().callEvent(new GameTeamRemovedMemberEvent(player, this));
         }
@@ -96,9 +96,9 @@ public class GameTeam extends GameDefault {
 
     public GameTeam updateTabList(Player player) {
         if(this.showPrefixAndSuffix && isMember(player)) {
-            if(this.tabListMode == TabList.TabListMode.CUSTOM) TabList.updateCustom(player, pos, prefix, suffix);
-            else TabList.update(player, this.tabListMode);
-        } else TabList.update(player, TabList.TabListMode.WHITE);
+            if(this.tabListMode == SpigotChestTabList.TabListMode.CUSTOM) SpigotChestTabList.updateCustom(player, pos, prefix, suffix);
+            else SpigotChestTabList.update(player, this.tabListMode);
+        } else SpigotChestTabList.update(player, SpigotChestTabList.TabListMode.WHITE);
         return this;
     }
 }
